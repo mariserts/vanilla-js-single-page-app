@@ -1,3 +1,14 @@
+function Component() {
+
+    var self = this;
+
+    self.get_object = function(){
+        return null;
+    };
+
+};
+
+
 function Page() {
 
     var self = this;
@@ -34,7 +45,7 @@ function PathNotFoundPage() {
     var self = this;
 
     self.get_content = function() {
-        return '<h1>URL path not found</h1>'
+        return '<h1>Path not found</h1>'
     };
 
 };
@@ -134,7 +145,5 @@ function Application(config) {
         );
 
     };
-
-    self.init();
 
 };

@@ -25,7 +25,20 @@
 
             };
 
+            function NotHomepagePage(){
+
+                Page.call(this);
+
+                var self = this;
+
+                self.get_content = function(){
+                    return '<h1>This is not homepage</h1>'
+                };
+
+            };
+
             var routes = [
+                new Route('^\/\#\/not-home-page/$', new NotHomepagePage()),
                 new Route('^\/\#\/$', new HomePage()),
                 new Route('^\/$', new HomePage()),
             ];
@@ -34,7 +47,7 @@
                 'routes': routes,
             }
 
-            new Application(config);
+            new Application(config).init();
 
         </script>
     </body>
