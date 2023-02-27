@@ -5,8 +5,8 @@ function Page() {
     self.get_content = function(){
         return '<h1>Page works!</h1>'
     };
-    self.render = function(main_container_id){
-        var content_block = document.getElementById(main_container_id);
+    self.render = function(root_container_id){
+        var content_block = document.getElementById(root_container_id);
         content_block.innerHTML = '';
         content_block.innerHTML = self.get_content();
     };
@@ -92,7 +92,7 @@ function Application(config) {
     var self = this;
 
     self.config = config
-    self.main_container_id = self.config.main_container_id || 'main-container';
+    self.root_container_id = self.config.root_container_id || 'root';
     self.router = self.config.router || new Router();
     self.routes = self.config.routes;
     self.page_404 = self.config.page_404 || new NotFoundPage();
@@ -101,15 +101,15 @@ function Application(config) {
     self.render = function() {
         var route = self.router.get_route();
         if (route === undefined) {
-            self.path_404.render(self.main_container_id);
+            self.path_404.render(self.root_container_id);
             return;
         }
-        route.page.render(self.main_container_id);
+        route.page.render(self.root_container_id);
     };
 
     self.init = function(){
 
-        var main_container = document.getElementById(self.main_container_id);
+        var main_container = document.getElementById(self.root_container_id);
         if (main_container === null){
             throw new Error('Main container not found');
         }
