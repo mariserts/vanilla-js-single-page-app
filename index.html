@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Vanilla JS Single page application</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+
+        <div id="content_block"></div>
+
+        <script src="./app.js"></script>
+        <script type="text/javascript">
+
+            function HomePage(){
+
+                Page.call(this);
+
+                var self = this;
+
+                self.get_content = function(){
+                    return '<h1>Hello world!</h1>'
+                };
+
+            };
+
+            var routes = [
+                new Route('^\/\#\/$', new HomePage()),
+                new Route('^\/$', new HomePage()),
+            ];
+
+            new Application(
+                new Router(),
+                routes,
+                'content_block',
+                new NotFoundPage(),
+            );
+
+        </script>
+    </body>
+</html>
