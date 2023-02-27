@@ -20,24 +20,34 @@ function NotFoundPage() {
 
     var self = this;
 
-    self.get_content = function(){
+    self.get_content = function() {
+        return '<h1>Not found</h1>'
+    };
+
+};
+
+
+function PathNotFoundPage() {
+
+    Page.call(this);
+
+    var self = this;
+
+    self.get_content = function() {
         return '<h1>URL path not found</h1>'
     };
 
 };
 
 
-function Route(
-    pattern,
-    page
-){
+function Route(pattern, page) {
 
     var self = this;
 
     self.pattern = pattern;
     self.page = page;
 
-    self.matches_path = function(path){
+    self.matches_path = function(path) {
         var matches = path.match(new RegExp(self.pattern));
         if (matches !== null){
             if (matches.length !== 0) {
@@ -50,19 +60,19 @@ function Route(
 };
 
 
-function Router(){
+function Router() {
 
     var self = this;
 
     self.routes = [];
 
-    self.get_current_path = function(){
+    self.get_current_path = function() {
         return '/' + window.location.hash;
     };
 
-    self.get_route = function(){
+    self.get_route = function() {
         var path = self.get_current_path();
-        for (var i = 0; i < self.routes.length; i++){
+        for (var i = 0; i < self.routes.length; i++) {
             if (self.routes[i].matches_path(path) === true) {
                 return self.routes[i];
             }
@@ -70,31 +80,28 @@ function Router(){
         return undefined;
     };
 
-    self.set_route = function(route){
+    self.set_route = function(route) {
         self.routes.push(route);
     };
 
 };
 
 
-function Application(
-    router,
-    routes,
-    main_container_id,
-    page_404,
-){
+function Application(config) {
 
     var self = this;
 
-    self.main_container_id = main_container_id;
-    self.router = router;
-    self.routes = routes;
-    self.page_404 = page_404;
+    self.config = config
+    self.main_container_id = self.config.main_container_id || 'main-container';
+    self.router = self.config.router || new Router();
+    self.routes = self.config.routes;
+    self.page_404 = self.config.page_404 || new NotFoundPage();
+    self.path_404 = self.config.page_404 || new PathNotFoundPage();
 
-    self.render = function(){
+    self.render = function() {
         var route = self.router.get_route();
         if (route === undefined) {
-            page_404.render(self.main_container_id);
+            self.path_404.render(self.main_container_id);
             return;
         }
         route.page.render(self.main_container_id);

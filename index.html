@@ -8,9 +8,9 @@
 
     <body>
 
-        <div id="content_block"></div>
+        <div id="main-container"></div>
 
-        <script src="./app.js"></script>
+        <script src="app.js"></script>
         <script type="text/javascript">
 
             function HomePage(){
@@ -30,12 +30,11 @@
                 new Route('^\/$', new HomePage()),
             ];
 
-            new Application(
-                new Router(),
-                routes,
-                'content_block',
-                new NotFoundPage(),
-            );
+            var config = {
+                'routes': routes,
+            }
+
+            new Application(config);
 
         </script>
     </body>
