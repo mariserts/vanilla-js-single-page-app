@@ -1,14 +1,3 @@
-function Component() {
-
-    var self = this;
-
-    self.get_object = function(){
-        return null;
-    };
-
-};
-
-
 function Page() {
 
     var self = this;
@@ -16,7 +5,7 @@ function Page() {
     self.get_content = function(){
         return '<h1>Page works!</h1>'
     };
-    self.render = function(root_container_id){
+    self.render = function(router, route, root_container_id){
         var content_block = document.getElementById(root_container_id);
         content_block.innerHTML = '';
         content_block.innerHTML = self.get_content();
@@ -57,15 +46,21 @@ function Route(pattern, page) {
 
     self.pattern = pattern;
     self.page = page;
+    self.regexp = new RegExp(self.pattern)
 
     self.matches_path = function(path) {
-        var matches = path.match(new RegExp(self.pattern));
+        var matches = path.match(self.regexp);
         if (matches !== null){
             if (matches.length !== 0) {
                 return true;
             };
         };
         return false;
+    };
+
+    self.get_named_groups = function(path) {
+        var regexp = self.regexp;
+        return regexp.exec(path).groups || {};
     };
 
 };
@@ -78,11 +73,46 @@ function Router() {
     self.routes = [];
 
     self.get_current_path = function() {
-        return '/' + window.location.hash;
+        return self.get_pathname() + self.get_hash();
+    };
+
+    self.get_pathname = function() {
+        var path = window.location.pathname;
+        if (window.location.pathname.indexOf('/') != 0) { path = '/' + path };
+        return path;
+    };
+
+    self.get_hash = function() {
+        var hash = window.location.hash;
+        hash = hash.split('?')[0];
+        if (hash.indexOf('/') !== 0){
+            hash = '/' + hash;
+        }
+        return hash;
+    };
+
+    self.get_query_dict = function() {
+        var query_string = window.location.hash;
+        var parts = query_string.split('?')[1] || '';
+        parts = parts.split('&');
+        var dict = {};
+
+        for (var i = 0; i < parts.length; i++){
+            var key_value = parts[i].split('=');
+            var key = key_value[0];
+            if (key !== '') {
+                if (dict[key] === undefined){
+                    dict[key] = [];
+                };
+                dict[key].push(key_value[1]);
+            };
+        };
+
+        return dict;
     };
 
     self.get_route = function() {
-        var path = self.get_current_path();
+        var path = self.get_hash();
         for (var i = 0; i < self.routes.length; i++) {
             if (self.routes[i].matches_path(path) === true) {
                 return self.routes[i];
@@ -112,10 +142,10 @@ function Application(config) {
     self.render = function() {
         var route = self.router.get_route();
         if (route === undefined) {
-            self.path_404.render(self.root_container_id);
+            self.path_404.render(self.router, self.root_container_id, undefined);
             return;
         }
-        route.page.render(self.root_container_id);
+        route.page.render(self.router, route, self.root_container_id);
     };
 
     self.init = function(){
@@ -127,7 +157,7 @@ function Application(config) {
 
         var path = self.router.get_current_path();
         if (path.indexOf('/#/') === -1){
-            window.location.href = '/#' + path;
+            window.location.href = path + '#/';
         };
 
         for (var i = 0; i < self.routes.length; i++){
