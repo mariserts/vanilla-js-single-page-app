@@ -84,17 +84,16 @@ function Router() {
 
     self.get_hash = function() {
         var hash = window.location.hash;
-        hash = hash.split('?')[0];
-        if (hash.indexOf('/') !== 0){
-            hash = '/' + hash;
-        }
-        return hash;
+        return hash.split('?')[0];
     };
 
     self.get_query_dict = function() {
+
         var query_string = window.location.hash;
+
         var parts = query_string.split('?')[1] || '';
         parts = parts.split('&');
+
         var dict = {};
 
         for (var i = 0; i < parts.length; i++){
@@ -109,15 +108,23 @@ function Router() {
         };
 
         return dict;
+
     };
 
     self.get_route = function() {
+
         var path = self.get_hash();
+
+        if (path.indexOf('/') !== 0) {
+            path = '/' + path;
+        }
+
         for (var i = 0; i < self.routes.length; i++) {
             if (self.routes[i].matches_path(path) === true) {
                 return self.routes[i];
             }
         }
+
         return undefined;
     };
 
